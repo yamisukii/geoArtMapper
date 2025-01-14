@@ -1,0 +1,56 @@
+body {
+  background-color: #121212; /* Dark background */
+  color: white; /* Light text */
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  color: #f0f0f0;
+}
+
+#nationalityFilterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #222; /* Dark background for container */
+  border-radius: 8px;
+}
+
+#nationalityFilterContainer div {
+  display: flex;
+  align-items: center;
+}
+
+.nationality-checkbox {
+  margin-right: 5px;
+  accent-color: orange; /* Change checkbox color */
+}
+
+label {
+  color: #ddd;
+}
+
+#controls {
+  text-align: center;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #222;
+  border-radius: 8px;
+}
+
+#yearSlider {
+  width: 80%;
+  accent-color: orange; /* Slider color */
+}
+
+input[type="checkbox"] {
+  accent-color: orange;
+}
+
+#map {
+  border: 2px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
