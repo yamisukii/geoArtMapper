@@ -1,11 +1,12 @@
 import { countryColors } from "./CountryColors.js";
 
-export function initializeMap() {
-  const map = L.map("map").setView([50, 10], 4); // Centered in Europe
+export function initializeMap(mapId) {
+  const map = L.map(mapId).setView([50, 10], 4); // Centered in Europe
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
+
   return map;
 }
 
@@ -28,7 +29,6 @@ export function addMarkersToMap(map, data) {
       .bindPopup(
         `<strong>${item["e.title"]}</strong><br>
          City: ${item["e.city"]}<br>
-         Country: ${item["e.country"]}<br>
          Paintings: ${item["e.paintings"]}`
       );
   });
@@ -122,7 +122,6 @@ export function addCityMarkers(map, dataset) {
       }).addTo(map).bindPopup(`
                   <div style="color: white; background-color: black; padding: 10px; border-radius: 5px;">
                       <strong>City:</strong> ${city}<br>
-                      <strong>Country:</strong> ${country}<br>
                       <strong>Year:</strong> ${year}<br>
                       <strong>Amount of Nationality:</strong> ${amountOfNationalities}<br>
                       <strong>Amount of Venues in this City:</strong> ${amountOfVenues}<br>

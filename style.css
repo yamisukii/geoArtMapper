@@ -2,55 +2,73 @@ body {
   background-color: #121212; /* Dark background */
   color: white; /* Light text */
   font-family: Arial, sans-serif;
-}
-
-h1 {
-  text-align: center;
-  color: #f0f0f0;
-}
-
-#nationalityFilterContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px;
-  background-color: #222; /* Dark background for container */
-  border-radius: 8px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
 }
 
-#nationalityFilterContainer div {
+.map-container {
+  width: 45%; /* Ensure each map takes 48% of the screen width */
+  margin: 1%; /* Small margin between the maps */
+  border: 1px solid #ccc; /* Optional border for clarity */
   display: flex;
+  flex-direction: column;
   align-items: center;
-}
-
-.nationality-checkbox {
-  margin-right: 5px;
-  accent-color: orange; /* Change checkbox color */
-}
-
-label {
-  color: #ddd;
-}
-
-#controls {
-  text-align: center;
-  margin: 10px 0;
+  background-color: #222; /* Dark background for map containers */
   padding: 10px;
-  background-color: #222;
   border-radius: 8px;
 }
 
-#yearSlider {
-  width: 80%;
-  accent-color: orange; /* Slider color */
+.controls {
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-input[type="checkbox"] {
-  accent-color: orange;
-}
-
-#map {
-  border: 2px solid #333;
+#map1,
+#map2 {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #333; /* Optional border for debugging */
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.selected-nationalities {
+  display: flex; /* Use flex layout */
+  flex-wrap: wrap; /* Allow wrapping to the next line */
+  gap: 10px; /* Space between tags */
+  margin-top: 10px;
+  background-color: #222; /* Optional: Background color for better visibility */
+  padding: 10px; /* Optional: Padding for better aesthetics */
+  border-radius: 8px; /* Optional: Rounded corners */
+}
+
+.selected-tag {
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.selected-tag button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.selected-tag button:hover {
+  color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    width: 100%; /* Stacks the maps on smaller screens */
+    margin: 0 0 20px 0;
+  }
 }
