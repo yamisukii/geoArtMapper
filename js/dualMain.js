@@ -18,6 +18,13 @@ async function initializeMapInstance(
   defaultYear = 1905,
   defaultNationality = null
 ) {
+  console.log("Initializing map instance for:", mapId); // Debug log
+  const mapContainer = document.getElementById(mapId);
+  if (!mapContainer) {
+    console.error(`Map container not found: ${mapId}`);
+    return;
+  }
+
   const map = initializeMap(mapId); // Ensure this is defined
   const data = await loadData();
 
@@ -29,9 +36,16 @@ async function initializeMapInstance(
     `${nationalityDropdownId}-selected`
   );
 
-  let showLines = true; // State for toggling lines
+  if (!yearSlider || !yearLabel || !nationalityDropdown || !toggleLinesButton) {
+    console.error(
+      `Missing elements: ${yearSliderId}, ${yearLabelId}, ${nationalityDropdownId}, ${toggleLinesButtonId}`
+    );
+    return;
+  }
 
-  // Populate nationality dropdown
+  let showLines = true;
+
+  // Populate dropdown
   Object.keys(restrictedCountryColors).forEach((country) => {
     const option = document.createElement("option");
     option.value = country;
@@ -39,7 +53,6 @@ async function initializeMapInstance(
     nationalityDropdown.appendChild(option);
   });
 
-  // Set default year and nationality
   yearSlider.value = defaultYear;
   yearLabel.textContent = defaultYear;
 
@@ -57,6 +70,7 @@ async function initializeMapInstance(
   }
 
   async function updateMap() {
+    console.log("Updating map:", mapId);
     map.eachLayer((layer) => {
       if (
         layer instanceof L.CircleMarker ||
@@ -91,9 +105,9 @@ async function initializeMapInstance(
     return Array.from(selectedTags).map((tag) => tag.dataset.value);
   }
 
+  // Event Listeners
   nationalityDropdown.addEventListener("change", async () => {
     const selectedValue = nationalityDropdown.value;
-
     if (
       Array.from(selectedContainer.children).some(
         (tag) => tag.dataset.value === selectedValue
