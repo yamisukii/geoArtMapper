@@ -5,6 +5,7 @@ import {
   addCityMarkers,
   addConnectingLines,
   addCountryClusters,
+  addLegend,
   initializeMap,
 } from "./map.js";
 
@@ -25,7 +26,8 @@ async function initializeMapInstance(
     return;
   }
 
-  const map = initializeMap(mapId); // Ensure this is defined
+  const map = initializeMap(mapId);
+  addLegend(map); // Ensure this is defined
   const data = await loadData();
 
   const yearSlider = document.getElementById(yearSliderId);

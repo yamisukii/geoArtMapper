@@ -10,28 +10,42 @@ export function initializeMap(mapId) {
   return map;
 }
 
-export function addMarkersToMap(map, data) {
-  data.forEach((item) => {
-    const latitude = parseFloat(item.latitude || item["e.latitude"]);
-    const longitude = parseFloat(item.longitude || item["e.longitude"]);
+export function addLegend(map) {
+  const legend = L.control({ position: "bottomright" });
 
-    if (isNaN(latitude) || isNaN(longitude)) {
-      console.warn("Skipping item due to invalid coordinates:", item);
-      return;
-    }
+  legend.onAdd = function () {
+    const div = L.DomUtil.create("div", "info legend");
+    div.style.backgroundColor = "black";
+    div.style.color = "white";
+    div.style.padding = "10px";
+    div.style.borderRadius = "8px";
+    div.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
 
-    // Add a marker to the map
-    L.circleMarker([latitude, longitude], {
-      radius: 5,
-      color: "blue",
-    })
-      .addTo(map)
-      .bindPopup(
-        `<strong>${item["e.title"]}</strong><br>
-         City: ${item["e.city"]}<br>
-         Paintings: ${item["e.paintings"]}`
-      );
-  });
+    div.innerHTML = `
+      <h4 style="margin: 0; padding: 0; font-size: 16px;">Legend</h4>
+      <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <div style="width: 15px; height: 15px; background-color: orange; border-radius: 50%; margin-right: 5px;"></div>
+        <span>City/Venue</span>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <svg width="15" height="15" style="margin-right: 5px;">
+          <polygon points="7.5,0 15,15 0,15" style="fill: #c51b8a;"></polygon>
+        </svg>
+        <span>City Marker (Triangle)</span>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <div style="width: 15px; height: 15px; background-color: maroon; border-radius: 50%; margin-right: 5px;"></div>
+        <span>Nationality Cluster</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 15px; height: 2px; background-color: white; margin-right: 5px;"></div>
+        <span>Connection Line</span>
+      </div>
+    `;
+    return div;
+  };
+
+  legend.addTo(map);
 }
 
 export async function addCountryClusters(map, dataset) {
@@ -106,28 +120,35 @@ export function addCityMarkers(map, dataset) {
       // Calculate additional stats for the popup
       const cityData = dataset.filter((entry) => entry["e.city"] === city);
       const amountOfNationalities = new Set(
-        cityData.map((entry) => entry["a.nationality"])
+        cityData.map((entry) => entry["nationality"])
       ).size;
       const amountOfVenues = new Set(cityData.map((entry) => entry["e.venue"]))
         .size;
       const amountOfArtists = cityData.length;
 
-      // Add a circle marker to the map
-      L.circleMarker([lat, lon], {
-        radius: 8, // Adjust marker size
-        color: "orange", // Marker border color
-        fillColor: "orange", // Marker fill color
+      // Define triangle marker coordinates
+      const size = 0.5; // Adjust size as needed
+      const triangle = [
+        [lat - size, lon - size], // Bottom-left
+        [lat - size, lon + size], // Bottom-right
+        [lat + size, lon], // Top
+      ];
+
+      // Add the triangle marker to the map
+      L.polygon(triangle, {
+        color: "#c51b8a", // Marker border color
+        fillColor: "#c51b8a", // Marker fill color
         fillOpacity: 0.7, // Marker fill opacity
         weight: 1, // Marker border weight
       }).addTo(map).bindPopup(`
-                  <div style="color: white; background-color: black; padding: 10px; border-radius: 5px;">
-                      <strong>City:</strong> ${city}<br>
-                      <strong>Year:</strong> ${year}<br>
-                      <strong>Amount of Nationality:</strong> ${amountOfNationalities}<br>
-                      <strong>Amount of Venues in this City:</strong> ${amountOfVenues}<br>
-                      <strong>Amount of Artists:</strong> ${amountOfArtists}
-                  </div>
-              `);
+          <div style="color: white; background-color: black; padding: 10px; border-radius: 5px;">
+              <strong>City:</strong> ${city}<br>
+              <strong>Year:</strong> ${year}<br>
+              <strong>Amount of Nationality:</strong> ${amountOfNationalities}<br>
+              <strong>Amount of Venues in this City:</strong> ${amountOfVenues}<br>
+              <strong>Amount of Artists:</strong> ${amountOfArtists}
+          </div>
+        `);
     }
   });
 }
