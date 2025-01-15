@@ -19,27 +19,23 @@ export function addLegend(map) {
     div.style.color = "white";
     div.style.padding = "10px";
     div.style.borderRadius = "8px";
-    div.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
+    div.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.5)";
+    div.style.fontSize = "12px";
 
     div.innerHTML = `
-      <h4 style="margin: 0; padding: 0; font-size: 16px;">Legend</h4>
-      <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <div style="width: 15px; height: 15px; background-color: orange; border-radius: 50%; margin-right: 5px;"></div>
-        <span>City/Venue</span>
-      </div>
-      <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <svg width="15" height="15" style="margin-right: 5px;">
-          <polygon points="7.5,0 15,15 0,15" style="fill: #c51b8a;"></polygon>
+      <h4 style="margin: 0; padding: 0; font-size: 14px; text-align: center;">Legend</h4>
+      <div style="display: flex; align-items: center; margin: 8px 0;">
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/034/759/406/small/location-map-pin-gps-pointer-markers-3d-realistic-icon-png.png" width="20" height="20">
         </svg>
-        <span>City Marker (Triangle)</span>
+        <span style="margin-left: 8px;">City Marker</span>
       </div>
-      <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <div style="width: 15px; height: 15px; background-color: maroon; border-radius: 50%; margin-right: 5px;"></div>
-        <span>Nationality Cluster</span>
+      <div style="display: flex; align-items: center; margin: 8px 0;">
+        <div style="width: 20px; height: 20px; background-color: maroon; border-radius: 50%;"></div>
+        <span style="margin-left: 8px;">Nationality Cluster</span>
       </div>
-      <div style="display: flex; align-items: center;">
-        <div style="width: 15px; height: 2px; background-color: white; margin-right: 5px;"></div>
-        <span>Connection Line</span>
+      <div style="display: flex; align-items: center; margin: 8px 0;">
+        <div style="width: 20px; height: 3px; background-color: white;"></div>
+        <span style="margin-left: 8px;">Connection Line</span>
       </div>
     `;
     return div;
@@ -113,7 +109,6 @@ export function addCityMarkers(map, dataset) {
     const lat = parseFloat(row["e.latitude"]);
     const lon = parseFloat(row["e.longitude"]);
     const city = row["e.city"];
-    const country = row["e.country"];
     const year = row["e.startdate"];
 
     if (!isNaN(lat) && !isNaN(lon)) {
@@ -126,21 +121,7 @@ export function addCityMarkers(map, dataset) {
         .size;
       const amountOfArtists = cityData.length;
 
-      // Define triangle marker coordinates
-      const size = 0.5; // Adjust size as needed
-      const triangle = [
-        [lat - size, lon - size], // Bottom-left
-        [lat - size, lon + size], // Bottom-right
-        [lat + size, lon], // Top
-      ];
-
-      // Add the triangle marker to the map
-      L.polygon(triangle, {
-        color: "#c51b8a", // Marker border color
-        fillColor: "#c51b8a", // Marker fill color
-        fillOpacity: 0.7, // Marker fill opacity
-        weight: 1, // Marker border weight
-      }).addTo(map).bindPopup(`
+      L.marker([lat, lon]).addTo(map).bindPopup(`
           <div style="color: white; background-color: black; padding: 10px; border-radius: 5px;">
               <strong>City:</strong> ${city}<br>
               <strong>Year:</strong> ${year}<br>

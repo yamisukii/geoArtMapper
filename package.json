@@ -13,6 +13,8 @@
     "d3": "^7.9.0",
     "html2canvas": "^1.4.1",
     "leaflet": "^1.9.4",
-    "leaflet-image": "^0.4.0"
+    "leaflet-image": "^0.4.0",
+    "mapbox-gl-leaflet": "^0.0.16",
+    "maplibre": "^0.0.1-security"
   }
 }
