@@ -5,59 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Map Comparison</title>
+
+    <!-- D3.js Library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Leaflet -->
+
+    <!-- Leaflet Library -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-
-    <!-- MapLibre GL -->
-    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
-
-    <!-- MapLibre GL Leaflet Plugin -->
-    <script src="https://unpkg.com/leaflet-maplibre-gl@0.15.0/leaflet-maplibre-gl.js"></script>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <!-- Title Section -->
     <h1 class="title">Inter Art Mapper</h1>
 
+    <!-- Maps Container -->
     <div class="maps-container">
-        <!-- Map 1 -->
+        <!-- Map 1 Container -->
         <div class="map-container">
             <h3>Map 1</h3>
             <div id="controls1" class="controls">
+                <!-- Year Slider -->
                 <label for="yearSlider1">Year: <span id="yearLabel1">1905</span></label>
                 <input type="range" id="yearSlider1" min="1905" max="1915" step="1" value="1905" />
+                <!-- Nationality Dropdown -->
                 <select id="nationalityDropdown1">
                     <option value="" disabled selected>Select Nationality</option>
                 </select>
+                <!-- Selected Nationalities Tags -->
                 <div id="nationalityDropdown1-selected" class="selected-nationalities"></div>
+                <!-- Toggle Lines Button -->
                 <button id="toggleShowLines1">Hide Lines</button>
             </div>
+            <!-- Map Element -->
             <div id="map1"></div>
         </div>
 
-        <!-- Map 2 -->
+        <!-- Map 2 Container -->
         <div class="map-container">
             <h3>Map 2</h3>
             <div id="controls2" class="controls">
+                <!-- Year Slider -->
                 <label for="yearSlider2">Year: <span id="yearLabel2">1905</span></label>
                 <input type="range" id="yearSlider2" min="1905" max="1915" step="1" value="1905" />
+                <!-- Nationality Dropdown -->
                 <select id="nationalityDropdown2">
                     <option value="" disabled selected>Select Nationality</option>
                 </select>
+                <!-- Selected Nationalities Tags -->
                 <div id="nationalityDropdown2-selected" class="selected-nationalities"></div>
+                <!-- Toggle Lines Button -->
                 <button id="toggleShowLines2">Hide Lines</button>
             </div>
+            <!-- Map Element -->
             <div id="map2"></div>
         </div>
     </div>
 
     <!-- Main JavaScript -->
-    <script type="module" src="./js/dualMain.js"></script>
+    <script type="module" src="./src/dualMain.js"></script>
 </body>
 
 </html>

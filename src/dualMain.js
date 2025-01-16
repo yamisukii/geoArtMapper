@@ -1,14 +1,33 @@
-import { restrictedCountryColors } from "./CountryColors.js";
-import { loadData } from "./dataLoader.js";
-import { filterExhibitionsByYear } from "./filters.js";
+// Import required modules and functions
+import { restrictedCountryColors } from "./CountryColors.js"; // Color mapping for countries
+import { loadData } from "./dataLoader.js"; // Function to load exhibition data
 import {
-  addCityMarkers,
-  addConnectingLines,
-  addCountryClusters,
-  addLegend,
-  initializeMap,
+  filterExhibitionsByYear, // Filters exhibition data by a given year
+  getSelectedNationalities, // Retrieves selected nationalities from the UI
+} from "./filters.js";
+import {
+  createSelectedTag, // Creates a UI tag for a selected nationality
+} from "./functionalities.js";
+
+import {
+  addCityMarkers, // Adds city markers to the map
+  addConnectingLines, // Adds connecting lines between cities on the map
+  addCountryClusters, // Adds clusters of exhibitions for countries
+  initializeMap, // Initializes the map instance
 } from "./map.js";
 
+/**
+ * Initializes a map instance with interactive controls.
+ *
+ * @param {string} mapId - The ID of the map container.
+ * @param {string} controlsId - The ID of the controls container.
+ * @param {string} yearSliderId - The ID of the year slider element.
+ * @param {string} yearLabelId - The ID of the year label element.
+ * @param {string} nationalityDropdownId - The ID of the nationality dropdown element.
+ * @param {string} toggleLinesButtonId - The ID of the toggle lines button.
+ * @param {number} defaultYear - The default year for the slider (default: 1905).
+ * @param {string|null} defaultNationality - The default nationality selection (default: null).
+ */
 async function initializeMapInstance(
   mapId,
   controlsId,
@@ -19,17 +38,22 @@ async function initializeMapInstance(
   defaultYear = 1905,
   defaultNationality = null
 ) {
-  console.log("Initializing map instance for:", mapId); // Debug log
+  console.log(`Initializing map instance for: ${mapId}`);
+
+  // Get references to required DOM elements
   const mapContainer = document.getElementById(mapId);
   if (!mapContainer) {
     console.error(`Map container not found: ${mapId}`);
     return;
   }
 
+  // Initialize the map and add a legend
   const map = initializeMap(mapId);
-  addLegend(map); // Ensure this is defined
+
+  // Load exhibition data
   const data = await loadData();
 
+  // Get control elements from the DOM
   const yearSlider = document.getElementById(yearSliderId);
   const yearLabel = document.getElementById(yearLabelId);
   const nationalityDropdown = document.getElementById(nationalityDropdownId);
@@ -38,6 +62,7 @@ async function initializeMapInstance(
     `${nationalityDropdownId}-selected`
   );
 
+  // Ensure all necessary elements exist
   if (!yearSlider || !yearLabel || !nationalityDropdown || !toggleLinesButton) {
     console.error(
       `Missing elements: ${yearSliderId}, ${yearLabelId}, ${nationalityDropdownId}, ${toggleLinesButtonId}`
@@ -45,9 +70,10 @@ async function initializeMapInstance(
     return;
   }
 
+  // Track whether connecting lines should be shown
   let showLines = true;
 
-  // Populate dropdown
+  // Populate the nationality dropdown with available options
   Object.keys(restrictedCountryColors).forEach((country) => {
     const option = document.createElement("option");
     option.value = country;
@@ -55,24 +81,25 @@ async function initializeMapInstance(
     nationalityDropdown.appendChild(option);
   });
 
+  // Set default year and nationality if provided
   yearSlider.value = defaultYear;
   yearLabel.textContent = defaultYear;
 
   if (defaultNationality) {
     nationalityDropdown.value = defaultNationality;
 
-    const tag = document.createElement("div");
-    tag.className = "selected-tag";
-    tag.dataset.value = defaultNationality;
-    tag.innerHTML = `
-      ${defaultNationality}
-      <button data-value="${defaultNationality}">&times;</button>
-    `;
+    // Create and append a tag for the default nationality
+    const tag = createSelectedTag(defaultNationality);
     selectedContainer.appendChild(tag);
   }
 
+  /**
+   * Updates the map with filtered data based on the current UI settings.
+   */
   async function updateMap() {
-    console.log("Updating map:", mapId);
+    console.log(`Updating map: ${mapId}`);
+
+    // Clear existing layers from the map
     map.eachLayer((layer) => {
       if (
         layer instanceof L.CircleMarker ||
@@ -83,33 +110,32 @@ async function initializeMapInstance(
       }
     });
 
+    // Retrieve current filter settings
     const year = yearSlider.value;
-    const selectedNationalities = getSelectedNationalities();
+    const selectedNationalities = getSelectedNationalities(
+      `${nationalityDropdownId}-selected`
+    );
 
+    // Filter data based on year and selected nationalities
     const filteredExhibitions = filterExhibitionsByYear(data, year).filter(
       (exhibition) =>
         selectedNationalities.length === 0 ||
         selectedNationalities.includes(exhibition["nationality"])
     );
 
+    // Add filtered data to the map
     await addCountryClusters(map, filteredExhibitions);
     addCityMarkers(map, filteredExhibitions);
-
     if (showLines) {
       await addConnectingLines(map, filteredExhibitions);
     }
   }
 
-  function getSelectedNationalities() {
-    const selectedTags = document.querySelectorAll(
-      `#${nationalityDropdownId}-selected .selected-tag`
-    );
-    return Array.from(selectedTags).map((tag) => tag.dataset.value);
-  }
-
-  // Event Listeners
+  // Event listener: Handle nationality selection
   nationalityDropdown.addEventListener("change", async () => {
     const selectedValue = nationalityDropdown.value;
+
+    // Prevent adding duplicate tags
     if (
       Array.from(selectedContainer.children).some(
         (tag) => tag.dataset.value === selectedValue
@@ -119,19 +145,15 @@ async function initializeMapInstance(
       return;
     }
 
-    const tag = document.createElement("div");
-    tag.className = "selected-tag";
-    tag.dataset.value = selectedValue;
-    tag.innerHTML = `
-      ${selectedValue}
-      <button data-value="${selectedValue}">&times;</button>
-    `;
+    // Add a new tag for the selected nationality
+    const tag = createSelectedTag(selectedValue);
     selectedContainer.appendChild(tag);
 
     await updateMap();
-    nationalityDropdown.value = "";
+    nationalityDropdown.value = ""; // Reset dropdown
   });
 
+  // Event listener: Remove nationality filter when tag is removed
   selectedContainer.addEventListener("click", async (event) => {
     if (event.target.tagName === "BUTTON") {
       const valueToRemove = event.target.dataset.value;
@@ -145,20 +167,24 @@ async function initializeMapInstance(
     }
   });
 
+  // Event listener: Toggle visibility of connecting lines
   toggleLinesButton.addEventListener("click", async () => {
     showLines = !showLines;
     toggleLinesButton.textContent = showLines ? "Hide Lines" : "Show Lines";
     await updateMap();
   });
 
+  // Event listener: Update map when the year slider value changes
   yearSlider.addEventListener("input", async () => {
     yearLabel.textContent = yearSlider.value;
     await updateMap();
   });
 
+  // Perform initial map update
   await updateMap();
 }
 
+// Initialize map instances when the DOM content is loaded
 document.addEventListener("DOMContentLoaded", async () => {
   await initializeMapInstance(
     "map1",

@@ -1,5 +1,12 @@
 import { countryColors } from "./CountryColors.js";
+import { addLegend } from "./functionalities.js";
 
+/**
+ * Initializes a Leaflet map and centers it in Europe.
+ *
+ * @param {string} mapId - The ID of the HTML element where the map will be rendered.
+ * @returns {Object} The initialized Leaflet map instance.
+ */
 export function initializeMap(mapId) {
   const map = L.map(mapId).setView([50, 10], 4); // Centered in Europe
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -7,46 +14,22 @@ export function initializeMap(mapId) {
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
+  // Pass L to addLegend
+  addLegend(L, map);
+
   return map;
 }
 
-export function addLegend(map) {
-  const legend = L.control({ position: "bottomright" });
-
-  legend.onAdd = function () {
-    const div = L.DomUtil.create("div", "info legend");
-    div.style.backgroundColor = "black";
-    div.style.color = "white";
-    div.style.padding = "10px";
-    div.style.borderRadius = "8px";
-    div.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.5)";
-    div.style.fontSize = "12px";
-
-    div.innerHTML = `
-      <h4 style="margin: 0; padding: 0; font-size: 14px; text-align: center;">Legend</h4>
-      <div style="display: flex; align-items: center; margin: 8px 0;">
-        <img src="https://static.vecteezy.com/system/resources/thumbnails/034/759/406/small/location-map-pin-gps-pointer-markers-3d-realistic-icon-png.png" width="20" height="20">
-        </svg>
-        <span style="margin-left: 8px;">City Marker</span>
-      </div>
-      <div style="display: flex; align-items: center; margin: 8px 0;">
-        <div style="width: 20px; height: 20px; background-color: maroon; border-radius: 50%;"></div>
-        <span style="margin-left: 8px;">Nationality Cluster</span>
-      </div>
-      <div style="display: flex; align-items: center; margin: 8px 0;">
-        <div style="width: 20px; height: 3px; background-color: white;"></div>
-        <span style="margin-left: 8px;">Connection Line</span>
-      </div>
-    `;
-    return div;
-  };
-
-  legend.addTo(map);
-}
-
+/**
+ * Adds nationality clusters to the map based on the dataset.
+ *
+ * @param {Object} map - The Leaflet map instance.
+ * @param {Array} dataset - The dataset containing nationality information.
+ */
 export async function addCountryClusters(map, dataset) {
   const countryClusters = {};
 
+  // Aggregate the dataset by nationality
   dataset.forEach((row) => {
     const country = row["nationality"];
     if (!country) {
@@ -56,6 +39,7 @@ export async function addCountryClusters(map, dataset) {
     countryClusters[country] = (countryClusters[country] || 0) + 1;
   });
 
+  // Load GeoJSON data
   let geojson;
   try {
     const response = await fetch("./data/europe.geojson");
@@ -65,14 +49,15 @@ export async function addCountryClusters(map, dataset) {
     return;
   }
 
+  // Extract country centroids from GeoJSON
   const countryCentroids = {};
   geojson.features.forEach((feature) => {
-    const countryCode = feature.properties.NAME;
-    const lat = parseFloat(feature.properties.LAT);
-    const lon = parseFloat(feature.properties.LON);
-
+    const { NAME: countryCode, LAT: lat, LON: lon } = feature.properties;
     if (countryCode && !isNaN(lat) && !isNaN(lon)) {
-      countryCentroids[countryCode] = { lat, lon };
+      countryCentroids[countryCode] = {
+        lat: parseFloat(lat),
+        lon: parseFloat(lon),
+      };
     } else {
       console.warn(
         "Invalid or missing coordinates for country:",
@@ -81,13 +66,11 @@ export async function addCountryClusters(map, dataset) {
     }
   });
 
+  // Add clusters to the map
   Object.keys(countryClusters).forEach((country) => {
     const color = countryColors[country] || "gray";
     const coords = countryCentroids[country];
-
-    if (!coords) {
-      return;
-    }
+    if (!coords) return;
 
     const { lat, lon } = coords;
 
@@ -104,6 +87,12 @@ export async function addCountryClusters(map, dataset) {
   });
 }
 
+/**
+ * Adds city markers to the map based on the dataset.
+ *
+ * @param {Object} map - The Leaflet map instance.
+ * @param {Array} dataset - The dataset containing city and artist information.
+ */
 export function addCityMarkers(map, dataset) {
   dataset.forEach((row) => {
     const lat = parseFloat(row["e.latitude"]);
@@ -112,7 +101,7 @@ export function addCityMarkers(map, dataset) {
     const year = row["e.startdate"];
 
     if (!isNaN(lat) && !isNaN(lon)) {
-      // Calculate additional stats for the popup
+      // Collect city-specific stats
       const cityData = dataset.filter((entry) => entry["e.city"] === city);
       const amountOfNationalities = new Set(
         cityData.map((entry) => entry["nationality"])
@@ -121,24 +110,33 @@ export function addCityMarkers(map, dataset) {
         .size;
       const amountOfArtists = cityData.length;
 
+      // Add marker to the map
       L.marker([lat, lon]).addTo(map).bindPopup(`
-          <div style="color: white; background-color: black; padding: 10px; border-radius: 5px;">
-              <strong>City:</strong> ${city}<br>
-              <strong>Year:</strong> ${year}<br>
-              <strong>Amount of Nationality:</strong> ${amountOfNationalities}<br>
-              <strong>Amount of Venues in this City:</strong> ${amountOfVenues}<br>
-              <strong>Amount of Artists:</strong> ${amountOfArtists}
-          </div>
-        `);
+        <div style="color: white; background-color: black; padding: 10px; border-radius: 5px;">
+          <strong>City:</strong> ${city}<br>
+          <strong>Year:</strong> ${year}<br>
+          <strong>Amount of Nationalities:</strong> ${amountOfNationalities}<br>
+          <strong>Amount of Venues:</strong> ${amountOfVenues}<br>
+          <strong>Amount of Artists:</strong> ${amountOfArtists}
+        </div>
+      `);
     }
   });
 }
 
+/**
+ * Adds connecting lines between cities and country clusters based on the dataset.
+ *
+ * @param {Object} map - The Leaflet map instance.
+ * @param {Array} dataset - The dataset containing city and nationality information.
+ * @param {string|null} [selectedNationality=null] - A specific nationality to filter the dataset.
+ */
 export async function addConnectingLines(
   map,
   dataset,
   selectedNationality = null
 ) {
+  // Load GeoJSON data
   let geojson;
   try {
     const response = await fetch("./data/europe.geojson");
@@ -148,14 +146,15 @@ export async function addConnectingLines(
     return;
   }
 
+  // Extract country centroids from GeoJSON
   const countryCentroids = {};
   geojson.features.forEach((feature) => {
-    const countryCode = feature.properties.NAME;
-    const lat = parseFloat(feature.properties.LAT);
-    const lon = parseFloat(feature.properties.LON);
-
+    const { NAME: countryCode, LAT: lat, LON: lon } = feature.properties;
     if (countryCode && !isNaN(lat) && !isNaN(lon)) {
-      countryCentroids[countryCode] = { lat, lon };
+      countryCentroids[countryCode] = {
+        lat: parseFloat(lat),
+        lon: parseFloat(lon),
+      };
     } else {
       console.warn(
         "Invalid or missing coordinates for country:",
@@ -164,15 +163,12 @@ export async function addConnectingLines(
     }
   });
 
+  // Filter dataset by nationality if specified
   const filteredDataset = selectedNationality
     ? dataset.filter((row) => row["nationality"] === selectedNationality)
     : dataset;
 
-  if (filteredDataset.length === 0) {
-    console.warn(`No data found for nationality: ${selectedNationality}`);
-    return;
-  }
-
+  // Add connecting lines to the map
   filteredDataset.forEach((row) => {
     const cityLat = parseFloat(row["e.latitude"]);
     const cityLon = parseFloat(row["e.longitude"]);
@@ -184,16 +180,12 @@ export async function addConnectingLines(
     }
 
     const clusterCoords = countryCentroids[artistCountry];
-    if (!clusterCoords) {
-      return;
-    }
-
-    const { lat: clusterLat, lon: clusterLon } = clusterCoords;
+    if (!clusterCoords) return;
 
     L.polyline(
       [
         [cityLat, cityLon],
-        [clusterLat, clusterLon],
+        [clusterCoords.lat, clusterCoords.lon],
       ],
       { color: countryColors[artistCountry] || "gray", weight: 2 }
     ).addTo(map);

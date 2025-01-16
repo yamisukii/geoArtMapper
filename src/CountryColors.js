@@ -1,3 +1,7 @@
+/**
+ * Color mapping for countries.
+ * Each country is assigned a specific color for visualization purposes.
+ */
 export const countryColors = {
   Armenia: "maroon",
   Austria: "darkred",
@@ -38,7 +42,10 @@ export const countryColors = {
   Ukraine: "blueviolet",
 };
 
-// Define and export restrictedCountryColors for Europe
+/**
+ * Restricted color mapping for European countries.
+ * Filters the `countryColors` object to include only European countries.
+ */
 export const restrictedCountryColors = Object.fromEntries(
   Object.entries(countryColors).filter(([country]) => {
     const europeanCountries = [
@@ -80,6 +87,6 @@ export const restrictedCountryColors = Object.fromEntries(
       "Turkey",
       "Ukraine",
     ];
-    return europeanCountries.includes(country);
+    return europeanCountries.includes(country); // Check if the country is in the list
   })
 );

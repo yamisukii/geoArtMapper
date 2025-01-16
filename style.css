@@ -1,98 +1,111 @@
+/* === Global Styles === */
+/* Sets a dark background with light text for the entire page */
 body {
   background-color: #121212; /* Dark background */
-  color: white; /* Light text */
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  color: white; /* Light text for contrast */
+  font-family: Arial, sans-serif; /* Consistent font across the site */
+  margin: 0; /* Removes default margin */
+  padding: 0; /* Removes default padding */
 }
 
+/* === Title Styles === */
+/* Centers the title and adds spacing */
 .title {
   text-align: center;
   margin: 20px 0;
 }
 
+/* === Map Layout Container === */
+/* Container for the maps, ensuring they align and are spaced appropriately */
 .maps-container {
-  display: flex;
-  justify-content: space-between; /* Ensures a gap between the maps */
+  display: flex; /* Places maps side by side */
+  justify-content: space-between; /* Adds space between maps */
   align-items: flex-start; /* Aligns maps to the top */
-  gap: 20px; /* Gap between the two maps */
-  padding: 20px; /* Padding on the sides */
-  width: 100%; /* Takes full width of the screen */
+  gap: 20px; /* Space between the two maps */
+  padding: 20px; /* Padding around the container */
+  width: 100%; /* Full width of the screen */
   box-sizing: border-box; /* Includes padding in width calculation */
 }
 
+/* === Individual Map Container === */
+/* Styles each map container to make them visually distinct */
 .map-container {
   flex: 1; /* Maps take equal width */
-  margin: 0; /* Removes margin to allow full-width layout */
+  margin: 0; /* No extra margin for cleaner layout */
   border: 1px solid #ccc; /* Optional border for clarity */
-  background-color: #222; /* Dark background for map containers */
-  padding: 10px;
-  border-radius: 8px;
+  background-color: #222; /* Dark background for the map container */
+  padding: 10px; /* Padding inside the container */
+  border-radius: 8px; /* Rounded corners for a modern look */
 }
+
+/* === Controls Section === */
+/* Styles for map-specific controls, such as sliders and dropdowns */
 .controls {
   margin-bottom: 10px;
-  text-align: center;
+  text-align: center; /* Centers controls within their container */
 }
 
+/* === Map Elements === */
+/* Styles for the maps themselves */
 #map1,
 #map2 {
-  width: 100%; /* Ensure maps fill the available container width */
-  height: 60vh; /* Adjust height as needed */
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 100%; /* Maps fill their container width */
+  height: 60vh; /* Maps take up 60% of the viewport height */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
 }
 
+/* === Selected Nationalities Tags === */
+/* Container for displaying selected nationality tags */
+.selected-nationalities {
+  display: flex; /* Flexible layout for the tags */
+  flex-wrap: wrap; /* Wraps tags to a new line if necessary */
+  gap: 10px; /* Space between tags */
+  margin-top: 10px; /* Adds space above the tags section */
+}
+
+/* Styles for individual nationality tags */
+.selected-tag {
+  background-color: #007bff; /* Primary blue color */
+  color: white; /* White text for contrast */
+  border-radius: 5px; /* Rounded corners */
+  padding: 5px 10px; /* Padding inside the tag */
+  display: flex; /* Ensures inline content is aligned */
+  align-items: center; /* Vertically centers content */
+  gap: 5px; /* Space between tag text and button */
+}
+
+/* Styles for the close button inside tags */
+.selected-tag button {
+  background: none; /* No background for the button */
+  border: none; /* Removes default border */
+  color: white; /* White color for consistency */
+  font-weight: bold; /* Bold text for emphasis */
+  cursor: pointer; /* Changes cursor to pointer on hover */
+}
+
+/* Hover effect for the close button */
+.selected-tag button:hover {
+  color: #ff6b6b; /* Red hover effect for delete button */
+}
+
+/* === Responsive Styles === */
+/* Adjust layout and map sizes for smaller screens */
 @media (max-width: 768px) {
+  /* Stack maps vertically on smaller screens */
   .maps-container {
-    flex-direction: column; /* Stack maps vertically on smaller screens */
-    gap: 20px; /* Space between stacked maps */
+    flex-direction: column; /* Changes layout to column */
+    gap: 20px; /* Adds space between stacked maps */
   }
 
+  /* Ensure maps take full width on smaller screens */
   .map-container {
-    width: 100%; /* Maps take full width on smaller screens */
+    width: 100%; /* Full width of the container */
   }
 
+  /* Adjust map height for smaller screens */
   #map1,
   #map2 {
-    height: 500px; /* Adjust height for smaller screens */
-  }
-}
-.selected-nationalities {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.selected-tag {
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  padding: 5px 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.selected-tag button {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.selected-tag button:hover {
-  color: #ff6b6b;
-}
-
-@media (max-width: 768px) {
-  .maps-container {
-    flex-direction: column;
-  }
-
-  .map-container {
-    flex: 1 1 100%;
-    margin: 0 0 20px 0;
+    height: 500px; /* Fixed height for smaller screens */
   }
 }
