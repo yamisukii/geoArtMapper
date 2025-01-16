@@ -8,14 +8,15 @@
 
 ## Author(s)
 
-- **[Your Name]**  
-  [Your Email Address or GitHub Profile]
+- **Stefan Merdian**
+- **Vikor Hoffman**
+- **Julius Greiff**
 
 ---
 
 ## Date
 
-- **[Insert Date]**
+- **15.01.2025**
 
 ---
 
@@ -25,13 +26,11 @@ The following libraries and toolkits are used in this project:
 
 1. **Leaflet.js**
 
-   - Version: 1.9.3
-   - License: BSD 2-Clause
+   - Version: 1.9.4
    - Website: [https://leafletjs.com/](https://leafletjs.com/)
 
 2. **D3.js**
-   - Version: 7.x
-   - License: BSD 3-Clause
+   - Version: 7.9.0
    - Website: [https://d3js.org/](https://d3js.org/)
 
 ---
@@ -40,34 +39,54 @@ The following libraries and toolkits are used in this project:
 
 The development was done in the following environment:
 
-- **Operating System**: Windows 10 / macOS 11.x / Linux Ubuntu 20.04
-- **JavaScript Runtime**: Node.js v16.x
-- **Browser**: Google Chrome v110+ or Mozilla Firefox v100+
-- **Text Editor/IDE**: Visual Studio Code v1.78
-- **Database**: CSV files for data storage (`dataset.csv`).
+- **Operating System**: Windows 10
+- **JavaScript Runtime**: Node.js v21.5.0.
+- **Text Editor/IDE**: Visual Studio Code
+- **Data**: CSV (`dataset.csv`).
 
 ---
 
 ## How to Start the Program
 
-Follow these steps to start the program:
+### Option 1: Run on GitHub Pages
 
-1. Clone the repository or extract the project files to your local directory.
-2. Open the root directory in a text editor or terminal.
-3. Ensure the following files are present in the root:
+You can quickly access and use the program by visiting the GitHub Pages site:
 
-   - `index.html`
-   - `style.css`
-   - `src/dualMain.js`
-   - `data/dataset.csv`
-   - Supporting modules:
-     - `CountryColors.js`
-     - `dataLoader.js`
-     - `filters.js`
-     - `functionalities.js`
-     - `map.js`
+[GeoArtMapper on GitHub Pages](https://yamisukii.github.io/geoArtMapper/)
 
-4. Start a local server (e.g., using Node.js or Python). Example command:
-   ```bash
-   python -m http.server
-   ```
+### Option 2: Run Locally
+
+If you prefer to run the program on your local machine, follow these steps:
+
+1. **Clone or Extract the Project Files**
+
+   - Clone the repository using the following command:
+     ```bash
+     git clone https://github.com/yamisukii/geoArtMapper.git
+     ```
+   - Alternatively, download and extract the project files into a directory on your computer.
+
+2. **Install Node.js**
+
+   - Ensure that Node.js is installed on your system. You can download it from [Node.js Official Website](https://nodejs.org/).
+
+3. **Install Dependencies**
+
+   - Open a terminal inside the project directory and run the following command to install the required package:
+     ```bash
+     npm install serve
+     ```
+
+4. **Start the Server**
+
+   - Use the `serve` command to start the program locally:
+     ```bash
+     npx serve
+     ```
+
+5. **Access the Program**
+   - Once the server is running, open your web browser and navigate to the provided localhost URL (typically `http://localhost:5000`).
+
+---
+
+Feel free to explore and use the GeoArtMapper project! If you encounter any issues, please check the repository documentation or reach out for support.
